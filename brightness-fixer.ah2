@@ -10,44 +10,41 @@ GroupAdd, programs, ahk_exe idea64.exe
 ; FileCreateShortcut, %A_ScriptFullPath%, %A_Startup%\%A_ScriptName%.lnk, %A_ScriptDir% 
 ; ;=============================================
 
-global brightness := 0
-ChangeBrightness(brightness)
+
+ChangeBrightness(0)
 Sleep, 100
 return
 
-ChangeBrightness(value, timeout = 1 )
+ChangeBrightness( ByRef brightness := 50, timeout = 1 )
 {
-    if ( value >= 100 )
-        {
-            value := 100
-        }
-        else if ( value <= 0 )
-            {
-                value := 0
-            }
-
-            global brightness := value
-
-            For property in ComObjGet( "winmgmts:\\.\root\WMI" ).ExecQuery( "SELECT * FROM WmiMonitorBrightnessMethods" )
-                property.WmiSetBrightness( timeout, value )
+    if ( brightness >= 0 && brightness <= 100 )
+    {
+        For property in ComObjGet( "winmgmts:\\.\root\WMI" ).ExecQuery( "SELECT * FROM WmiMonitorBrightnessMethods" )
+            property.WmiSetBrightness( timeout, brightness )
+    }
+    else if ( brightness > 100 )
+    {
+        brightness := 100
+    }
+    else if ( brightness < 0 )
+    {
+        brightness := 0
+    }
 }
 
-; Same as Vim Up
-^k::
+^h::
     ChangeBrightness(brightness += 5)
     return
-; Same as Vim Down
 ^j:: 
     ChangeBrightness(brightness -= 5)
-    return
 
 
 
 #IfWinNotActive ahk_group programs
 ^b::
-ChangeBrightness(0)
+ChangeBrightness(100)
 return
 ^+b::
-ChangeBrightness(100)
+ChangeBrightness(0)
 return
 
