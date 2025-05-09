@@ -33,7 +33,8 @@ ChangeBrightness(value, timeout = 1 )
 }
 
 ; Same as Vim Up
-^k::
+;^k::     <===== Conflicting with ClickUp.com search command
+^u::
     ChangeBrightness(brightness += 5)
     return
 ; Same as Vim Down
